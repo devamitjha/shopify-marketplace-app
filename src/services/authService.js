@@ -21,7 +21,7 @@ export async function getMarketplaceToken() {
   });
 
   const response = await axios.post(
-    "https://lucira.live.ornaverse.in/connect/token",
+    "https://lucira.uat.ornaverse.in/connect/token",
     data,
     {
       headers: {

@@ -8,7 +8,7 @@ export async function sendOrderToMarketplace(payload, token) {
     console.log(JSON.stringify(payload, null, 2));
 
     const response = await axios.post(
-      "https://lucira.live.ornaverse.in/Services/MarketPlace/Order/Generate",
+      "https://lucira.uat.ornaverse.in/Services/MarketPlace/Order/Generate",
       payload,
       {
         headers: {
