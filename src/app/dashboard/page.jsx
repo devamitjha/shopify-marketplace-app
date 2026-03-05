@@ -1,47 +1,24 @@
-"use client";
+import { pool } from "@/lib/db";
+import OrdersTable from "./OrdersTable";
 
-async function retryOrder(id) {
+export const dynamic = "force-dynamic";
 
-  await fetch("/api/retry-order", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ id })
-  });
+export default async function DashboardPage() {
 
-  alert("Retry sent to queue");
-}
+  const result = await pool.query(`
+    SELECT id, order_id, order_number, status
+    FROM order_logs
+    ORDER BY created_at DESC
+    LIMIT 20
+  `);
 
-export default function OrdersTable({ orders }) {
+  const orders = result.rows;
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Order</th>
-          <th>Status</th>
-          <th>Retry</th>
-        </tr>
-      </thead>
+    <div>
+      <h1>Orders Dashboard</h1>
 
-      <tbody>
-        {orders.map(order => (
-          <tr key={order.id}>
-            <td>{order.order_number}</td>
-            <td>{order.status}</td>
-
-            <td>
-              {order.status === "failed" && (
-                <button onClick={() => retryOrder(order.id)}>
-                  Retry
-                </button>
-              )}
-            </td>
-
-          </tr>
-        ))}
-      </tbody>
-    </table>
+      <OrdersTable orders={orders} />
+    </div>
   );
 }
