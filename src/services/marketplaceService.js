@@ -1,51 +1,51 @@
-import axios from "axios";
+import dotenv from "dotenv";
+dotenv.config();
 
-export async function sendOrderToMarketplace(payload, token) {
+import { Worker } from "bullmq";
+import { connection } from "../lib/redis.js";
+import { getMarketplaceToken } from "../services/authService.js";
+import { sendOrderToMarketplace } from "../services/marketplaceService.js";
+import { buildMarketplacePayload } from "../lib/marketplacePayload.js";
 
-  try {
+console.log("Worker started...");
 
-    console.log("Sending payload to Marketplace:");
-    console.log(JSON.stringify(payload, null, 2));
+const worker = new Worker(
+  "orders",
+  async job => {
 
-    const response = await axios.post(
-      "https://lucira.uat.ornaverse.in/Services/MarketPlace/Order/Generate",
-      payload,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        timeout: 20000
+    const order = job.data;
+
+    console.log("Processing order:", order.id);
+
+    try {
+
+      const token = await getMarketplaceToken();
+
+      const payload = buildMarketplacePayload(order);
+
+      console.log("Payload generated:");
+      console.log(JSON.stringify(payload, null, 2));
+
+      const response = await sendOrderToMarketplace(payload, token);
+
+      console.log("Order sent successfully:", response);
+
+    } catch (error) {
+
+      console.log("Order processing failed");
+
+      if (error.response) {
+        console.log("Status:", error.response.status);
+        console.log(
+          "Marketplace response:",
+          JSON.stringify(error.response.data, null, 2)
+        );
+      } else {
+        console.log("Error:", error.message);
       }
-    );
-
-    console.log("Marketplace SUCCESS:");
-    console.log(JSON.stringify(response.data, null, 2));
-
-    return response.data;
-
-  } catch (error) {
-
-    console.log("Marketplace API ERROR");
-
-    if (error.response) {
-
-      console.log("Status:", error.response.status);
-      console.log(
-        "Response:",
-        JSON.stringify(error.response.data, null, 2)
-      );
-
-    } else if (error.request) {
-
-      console.log("No response received from server");
-
-    } else {
-
-      console.log("Error:", error.message);
 
     }
 
-    throw error;
-  }
-}
+  },
+  { connection }
+);
