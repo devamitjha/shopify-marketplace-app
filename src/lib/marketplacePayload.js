@@ -1,5 +1,12 @@
 export function buildMarketplacePayload(order) {
 
+  const phone =
+    order.phone ||
+    order.customer?.phone ||
+    order.shipping_address?.phone ||
+    order.billing_address?.phone ||
+    "";
+
   return {
     channel: 4,
 
@@ -13,12 +20,12 @@ export function buildMarketplacePayload(order) {
         first_name: order.customer?.first_name,
         last_name: order.customer?.last_name,
         email: order.customer?.email,
-        phone: order.customer?.phone || order.phone,
+        phone: phone,
         currency: order.currency || "INR",
         state: order.customer?.state || "enabled",
         note: order.note || "",
-        verified_email: order.customer?.verified_email || true,
-        tax_exempt: order.customer?.tax_exempt || false
+        verified_email: order.customer?.verified_email ?? true,
+        tax_exempt: order.customer?.tax_exempt ?? false
       },
 
       shipping_address: {
@@ -31,7 +38,7 @@ export function buildMarketplacePayload(order) {
         zip: order.shipping_address?.zip,
         province: order.shipping_address?.province,
         country: order.shipping_address?.country,
-        phone: order.shipping_address?.phone || order.phone,
+        phone: order.shipping_address?.phone || phone,
         company: order.shipping_address?.company || "",
         country_code: order.shipping_address?.country_code,
         province_code: order.shipping_address?.province_code
@@ -47,7 +54,7 @@ export function buildMarketplacePayload(order) {
         zip: order.billing_address?.zip,
         province: order.billing_address?.province,
         country: order.billing_address?.country,
-        phone: order.billing_address?.phone || order.phone,
+        phone: order.billing_address?.phone || phone,
         company: order.billing_address?.company || "",
         country_code: order.billing_address?.country_code,
         province_code: order.billing_address?.province_code
