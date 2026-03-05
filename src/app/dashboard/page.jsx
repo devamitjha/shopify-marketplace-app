@@ -1,24 +1,47 @@
 "use client";
 
-import Link from "next/link";
+async function retryOrder(id) {
 
-export default function Dashboard() {
+  await fetch("/api/retry-order", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ id })
+  });
+
+  alert("Retry sent to queue");
+}
+
+export default function OrdersTable({ orders }) {
 
   return (
+    <table>
+      <thead>
+        <tr>
+          <th>Order</th>
+          <th>Status</th>
+          <th>Retry</th>
+        </tr>
+      </thead>
 
-    <div style={{ padding: 40 }}>
+      <tbody>
+        {orders.map(order => (
+          <tr key={order.id}>
+            <td>{order.order_number}</td>
+            <td>{order.status}</td>
 
-      <h1>Shopify ERP Integration</h1>
+            <td>
+              {order.status === "failed" && (
+                <button onClick={() => retryOrder(order.id)}>
+                  Retry
+                </button>
+              )}
+            </td>
 
-      <div style={{ marginTop: 20 }}>
-
-        <Link href="/logs">
-          View Order Logs
-        </Link>
-
-      </div>
-
-    </div>
-
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }
