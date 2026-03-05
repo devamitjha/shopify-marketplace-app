@@ -1,13 +1,20 @@
 import pkg from "pg";
 const { Pool } = pkg;
-console.log("DB PASSWORD:", process.env.DB_PASSWORD);
-const pool = new Pool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: 5432
-});
+
+let pool = null;
+
+function getPool() {
+  if (!pool) {
+    pool = new Pool({
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      port: 5432
+    });
+  }
+  return pool;
+}
 
 export async function saveOrderLog(data) {
   const query = `
@@ -16,7 +23,7 @@ export async function saveOrderLog(data) {
     VALUES ($1,$2,$3,$4,$5,$6)
   `;
 
-  await pool.query(query, [
+  await getPool().query(query, [
     data.order_id,
     data.order_number,
     data.status,
@@ -25,4 +32,3 @@ export async function saveOrderLog(data) {
     data.error
   ]);
 }
-

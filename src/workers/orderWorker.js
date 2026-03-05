@@ -9,6 +9,7 @@ import { saveOrderLog } from "../services/logService.js";
 import { buildMarketplacePayload } from "../lib/marketplacePayload.js";
 
 console.log("Worker started...");
+console.log("DB PASSWORD:", process.env.DB_PASSWORD);
 
 const worker = new Worker(
   "orders",
