@@ -1,24 +1,38 @@
-import { pool } from "@/lib/db";
-import OrdersTable from "./OrdersTable";
+// import { pool } from "@/lib/db";
+// import OrdersTable from "./OrdersTable";
 
-export const dynamic = "force-dynamic";
 
-export default async function DashboardPage() {
+// export const dynamic = "force-dynamic";
 
-  const result = await pool.query(`
-    SELECT id, order_id, order_number, status
-    FROM order_logs
-    ORDER BY created_at DESC
-    LIMIT 20
-  `);
+// export default async function DashboardPage() {
 
-  const orders = result.rows;
+//   const result = await pool.query(`
+//     SELECT id, order_id, order_number, status
+//     FROM order_logs
+//     ORDER BY created_at DESC
+//     LIMIT 20
+//   `);
+
+//   const orders = result.rows;
+
+//   return (
+//     <div>
+//       <h1>Orders Dashboard</h1>
+
+//       <OrdersTable orders={orders} />
+//     </div>
+//   );
+// }
+
+"use client";
+
+import { Page } from "@shopify/polaris";
+
+export default function Dashboard() {
 
   return (
-    <div>
-      <h1>Orders Dashboard</h1>
-
-      <OrdersTable orders={orders} />
-    </div>
+    <Page title="ERP Order Sync">
+      Dashboard loaded
+    </Page>
   );
 }

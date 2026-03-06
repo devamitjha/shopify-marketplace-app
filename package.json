@@ -12,6 +12,9 @@
   "dependencies": {
     "@bull-board/api": "^6.20.3",
     "@bull-board/express": "^6.20.3",
+    "@shopify/app-bridge": "^3.7.11",
+    "@shopify/app-bridge-react": "^4.2.10",
+    "@shopify/polaris": "^13.9.5",
     "axios": "^1.13.6",
     "bullmq": "^5.70.1",
     "dotenv": "^17.3.1",
