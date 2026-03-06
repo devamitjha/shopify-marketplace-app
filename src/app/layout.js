@@ -1,3 +1,6 @@
+"use client";
+import { AppBridgeProvider } from "@shopify/app-bridge-react";
+
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -17,12 +20,20 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  const config = {
+    apiKey: process.env.NEXT_PUBLIC_SHOPIFY_API_KEY,
+    host: typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search).get("host")
+      : ""
+  };
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <AppBridgeProvider config={config}>
+          {children}
+        </AppBridgeProvider>
       </body>
     </html>
   );
